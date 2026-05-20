@@ -2,6 +2,17 @@
 
 import { useState, useEffect } from 'react'
 
+function getAdminPasswordOrPrompt(): string | null {
+  let password = sessionStorage.getItem('admin_password')
+  if (!password) {
+    const input = prompt('Admin 비밀번호를 입력하세요:')
+    if (!input) return null
+    sessionStorage.setItem('admin_password', input)
+    password = input
+  }
+  return password
+}
+
 export default function AdminSettingsPage() {
   const [faviconUrl, setFaviconUrl] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
@@ -17,12 +28,12 @@ export default function AdminSettingsPage() {
   const [savingAuthor, setSavingAuthor] = useState(false)
 
   useEffect(() => {
+    const password = getAdminPasswordOrPrompt()
+    if (!password) return
+    const auth = `?password=${encodeURIComponent(password)}`
+
     // Load current settings
-    fetch('/api/admin/settings', {
-      headers: {
-        'Authorization': `Basic ${btoa('admin:' + (document.cookie.match(/admin_password=([^;]+)/)?.[1] || ''))}`
-      }
-    })
+    fetch(`/api/admin/settings${auth}`)
       .then(res => res.json())
       .then(data => {
         if (data.settings) {
@@ -45,7 +56,7 @@ export default function AdminSettingsPage() {
       .catch(() => {})
 
     // Load meta description full value
-    fetch('/api/admin/settings/meta-description')
+    fetch(`/api/admin/settings/meta-description${auth}`)
       .then(res => res.json())
       .then(data => {
         if (data.value) setMetaDescription(data.value)
@@ -53,7 +64,7 @@ export default function AdminSettingsPage() {
       .catch(() => {})
 
     // Load default author full value (not sensitive — show plain text)
-    fetch('/api/admin/settings/default-author')
+    fetch(`/api/admin/settings/default-author${auth}`)
       .then(res => res.json())
       .then(data => {
         if (data.value) setDefaultAuthor(data.value)
@@ -69,10 +80,12 @@ export default function AdminSettingsPage() {
     setMessage('')
 
     try {
+      const password = getAdminPasswordOrPrompt()
+      if (!password) { setUploading(false); return }
       const formData = new FormData()
       formData.append('favicon', file)
 
-      const res = await fetch('/api/admin/upload-favicon', {
+      const res = await fetch(`/api/admin/upload-favicon?password=${encodeURIComponent(password)}`, {
         method: 'POST',
         body: formData,
       })
@@ -101,10 +114,12 @@ export default function AdminSettingsPage() {
     setMessage('')
 
     try {
+      const password = getAdminPasswordOrPrompt()
+      if (!password) { setUploadingLogo(false); return }
       const formData = new FormData()
       formData.append('logo', file)
 
-      const res = await fetch('/api/admin/upload-logo', {
+      const res = await fetch(`/api/admin/upload-logo?password=${encodeURIComponent(password)}`, {
         method: 'POST',
         body: formData,
       })
@@ -133,7 +148,9 @@ export default function AdminSettingsPage() {
     setSavingUnsplash(true)
     setMessage('')
     try {
-      const res = await fetch('/api/admin/settings', {
+      const password = getAdminPasswordOrPrompt()
+      if (!password) { setSavingUnsplash(false); return }
+      const res = await fetch(`/api/admin/settings?password=${encodeURIComponent(password)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ UNSPLASH_ACCESS_KEY: unsplashKey.trim() }),
@@ -166,7 +183,9 @@ export default function AdminSettingsPage() {
     setSavingAuthor(true)
     setMessage('')
     try {
-      const res = await fetch('/api/admin/settings', {
+      const password = getAdminPasswordOrPrompt()
+      if (!password) { setSavingAuthor(false); return }
+      const res = await fetch(`/api/admin/settings?password=${encodeURIComponent(password)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ DEFAULT_POST_AUTHOR: trimmed }),
@@ -189,7 +208,9 @@ export default function AdminSettingsPage() {
     setMessage('')
 
     try {
-      const res = await fetch('/api/admin/settings', {
+      const password = getAdminPasswordOrPrompt()
+      if (!password) { setSaving(false); return }
+      const res = await fetch(`/api/admin/settings?password=${encodeURIComponent(password)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

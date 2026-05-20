@@ -22,13 +22,20 @@ jobs:
     steps:
       - name: Trigger AI generation endpoint
         run: |
-          response=$(curl -s -o /tmp/body.json -w "%{http_code}" -X POST \
+          # -L: SITE_URL이 redirect 도메인이어도 따라가서 호출 (308 무한대기 방지)
+          response=$(curl -sL -o /tmp/body.json -w "%{http_code}" -X POST \
             "${{ secrets.SITE_URL }}/api/cron/generate-post" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json")
           echo "HTTP status: $response"
           cat /tmp/body.json || true
-          if [ "$response" -ge 500 ]; then
-            echo "Server error occurred"
+          echo ""
+          # 2xx 이외는 모두 실패로 처리 (308/401/404 등이 success로 통과되던 문제 차단)
+          if [ "$response" -lt 200 ] || [ "$response" -ge 300 ]; then
+            echo "❌ Post generation failed (HTTP $response). 보통 원인:"
+            echo "   - SITE_URL secret이 실제 Vercel 배포 URL과 다름 (308)"
+            echo "   - CRON_SECRET 불일치 (401)"
+            echo "   - /admin/keywords에 등록된 키워드 없음 (400)"
             exit 1
           fi
+          echo "✅ Post generation succeeded"

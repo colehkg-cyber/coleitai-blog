@@ -4,6 +4,38 @@
 
 ---
 
+## 2026-05-20 — GitHub Actions 글 생성 워크플로우 silent failure 수정
+
+- **변경**: `.github/workflows/auto-publish.yml`
+  - curl에 `-L` 추가 → SITE_URL이 redirect 도메인이어도 따라감 (308 차단)
+  - 성공 판정을 `>= 500`만 실패 → `2xx 외 전부 실패`로 강화
+  - 실패 시 흔한 원인(SITE_URL 불일치, CRON_SECRET 불일치, 키워드 미등록) 출력
+- **이유**: 수강생이 workflow를 수동 실행해도 글이 생성되지 않는 경우. SITE_URL secret이 redirect 도메인이면 308 응답이 와서 curl이 멈춤. 워크플로우는 500 미만이면 success 처리해서 사용자가 실패를 인지하지 못함.
+- **검증**: ahj1402-sys/my-blog에서 재현·검증 완료. -L 적용 후 308 → 실제 원인(CRON_SECRET 불일치 시 401) 노출.
+
+---
+
+## 2026-05-20 — Admin 설정 페이지 401 Unauthorized 수정
+
+- **변경**: `src/app/admin/settings/page.tsx`
+  - 인증 패턴을 codebase 표준(`sessionStorage` + `?password=` query param)으로 통일
+  - GET 3개 (settings, meta-description, default-author) — 존재하지 않는 `document.cookie` 읽음 → `sessionStorage`로 변경
+  - POST 5개 (settings 저장 3개 + favicon/logo 업로드 2개) — 인증 헤더 자체가 없음 → `?password=` 추가
+  - `getAdminPasswordOrPrompt()` 헬퍼 추가
+- **이유**: 설정 페이지에서 저장 시 401. POST 요청들이 인증 정보를 안 보내고 있었음. GET도 `document.cookie`를 읽고 있었는데 로그인은 `sessionStorage`에 저장하므로 작동한 적이 없음.
+- **검증**: `pnpm type-check` 에러 없음. `AdminPostsTable.tsx`와 동일한 패턴.
+
+---
+
+## 2026-05-20 — Admin URL 복사 시 404 발생 문제 수정
+
+- **변경**: `src/components/admin/AdminPostsTable.tsx` `handleCopyUrl`
+  - `process.env.NEXT_PUBLIC_SITE_URL` → `window.location.origin` 으로 변경
+- **이유**: `NEXT_PUBLIC_SITE_URL` 환경변수가 실제 배포 URL과 다르면 복사된 URL이 404로 연결되는 문제. 수강생이 환경변수 정확히 맞추기 어려우므로 코드 레벨에서 차단.
+- **검증**: `pnpm type-check` 에러 없음. admin 페이지는 `'use client'` 컴포넌트라 `window.location.origin`은 항상 현재 접속한 도메인(=실제 배포 URL)을 반환.
+
+---
+
 ## 2026-05-12 — Lighthouse SEO/Performance 100점화
 
 - **변경**:
