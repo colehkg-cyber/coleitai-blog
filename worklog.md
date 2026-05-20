@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-05-20 — 썸네일 다양성 + cron 500 에러 가시성 개선
+
+- **변경**:
+  - `src/lib/unsplash.ts`: `per_page` 1 → 30, 결과 중 랜덤 1장 선택
+  - `src/app/api/cron/generate-post/route.ts`: handler를 try/catch로 감싸 예외 시 메시지를 응답 body에 포함
+- **이유**:
+  - 썸네일 동일 문제: `extractImageKeywords`가 기본값으로 fallback되면 + `per_page: 1`은 항상 #1 사진을 반환 → 여러 글이 같은 썸네일 공유. 키워드 매칭되어도 동일 query는 동일 #1 → 다양성 0.
+  - 500 에러 가시성: cron route에 top-level try/catch가 없어서 예외 발생 시 Next.js가 빈 body의 500을 반환 → workflow 로그에 원인이 안 보임. try/catch로 message/stage를 응답에 실어 디버깅 가능하도록.
+- **검증**: `pnpm type-check` 통과.
+
+---
+
 ## 2026-05-20 — GitHub Actions 글 생성 워크플로우 silent failure 수정
 
 - **변경**: `.github/workflows/auto-publish.yml`

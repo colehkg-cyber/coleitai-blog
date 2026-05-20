@@ -51,6 +51,22 @@ async function handler(request: NextRequest) {
     return NextResponse.json({ error: 'GEMINI_API_KEY not configured' }, { status: 500 })
   }
 
+  try {
+    return await generatePost(request)
+  } catch (err) {
+    // 빈 body의 500을 막기 위해 에러 메시지를 응답에 포함 (workflow 로그에서 즉시 원인 파악 가능)
+    const message = err instanceof Error ? err.message : String(err)
+    const stage = (err as Error & { stage?: string })?.stage
+    logger.error('Cron: 글 생성 중 예외 발생', { message, stage })
+    return NextResponse.json(
+      { error: 'Post generation failed', message, stage: stage ?? 'unknown' },
+      { status: 500 }
+    )
+  }
+}
+
+async function generatePost(request: NextRequest) {
+
   // 1. 가장 적게 사용된 키워드 1개 선택 (round-robin 비슷)
   const keyword = await prisma.keyword.findFirst({
     orderBy: [{ usageCount: 'asc' }, { createdAt: 'asc' }],

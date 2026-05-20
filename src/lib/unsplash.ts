@@ -54,7 +54,9 @@ export async function searchUnsplashImage(
   try {
     const url = new URL('https://api.unsplash.com/search/photos')
     url.searchParams.append('query', query)
-    url.searchParams.append('per_page', '1')
+    // per_page 30 + 랜덤 선택: 같은 query여도 매번 다른 이미지를 얻기 위함.
+    // (1로 두면 항상 #1 결과가 와서 여러 글이 같은 썸네일을 공유함)
+    url.searchParams.append('per_page', '30')
     url.searchParams.append('orientation', orientation)
 
     const response = await fetch(url.toString(), {
@@ -75,8 +77,9 @@ export async function searchUnsplashImage(
       return null
     }
 
-    // 첫 번째 결과 반환
-    return data.results[0]
+    // 결과 중 랜덤 1장 — 다양성 확보
+    const randomIndex = Math.floor(Math.random() * data.results.length)
+    return data.results[randomIndex]
   } catch (error) {
     console.error('❌ Unsplash 이미지 검색 실패:', error)
     return null
