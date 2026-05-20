@@ -100,6 +100,10 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     verification: {
       google: siteConfig.verification.google || undefined,
+      // 네이버는 Next.js metadata 표준 키가 아니므로 other로 렌더링
+      other: siteConfig.verification.naver
+        ? { 'naver-site-verification': siteConfig.verification.naver }
+        : undefined,
     },
   }
 }
