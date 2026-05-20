@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-05-20 — 헤더 통일 (SiteHeader 컴포넌트로 추출)
+
+- **변경**:
+  - `src/components/SiteHeader.tsx` 신설 — 사이트 공통 헤더 (디자인은 기존 PageLayout 그대로 유지: 흰 배경 + `.logo-text` 그라데이션 + 회색 네비)
+  - `src/app/[locale]/page.tsx` — inline 헤더 제거 → `<SiteHeader currentPath="/" />`
+  - `src/app/[locale]/posts/[slug]/page.tsx` — inline 헤더 제거 → `<SiteHeader locale={...} />`
+  - `src/app/posts/[slug]/page.tsx` — inline 헤더 제거 (하드코딩 About/Contact 링크도 함께 제거)
+  - `src/app/archive/page.tsx` — inline 헤더 제거 → `<SiteHeader currentPath="/archive" />`
+  - `src/components/PageLayout.tsx` — 내부적으로 SiteHeader 위임 (DRY)
+- **이유**: 기존엔 4개 메인 페이지가 각자 inline 헤더를 다르게 박아놨음 (홈은 그라데이션 로고, 글 상세는 italic serif, 아카이브는 다른 폰트, 등). 그래서 헤더를 한 번 바꾸려면 4~5 곳을 동시에 수정해야 했고 디자인이 일관되지 않음. 한 컴포넌트로 통일해서 앞으로는 `SiteHeader.tsx` 한 파일만 고치면 모든 페이지에 반영됨.
+- **검증**: `pnpm type-check` 통과. 디자인은 PageLayout이 원래 쓰던 스타일과 동일하게 유지했으므로 sub-page들의 외형 변화는 없음 (홈/글 상세/아카이브만 PageLayout 스타일로 통일됨).
+
+---
+
 ## 2026-05-20 — 썸네일 다양성 + cron 500 에러 가시성 개선
 
 - **변경**:

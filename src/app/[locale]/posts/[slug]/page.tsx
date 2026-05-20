@@ -16,6 +16,7 @@ import { shouldUseNextImage } from '@/lib/image-utils'
 import { tagsToArray } from '@/lib/utils/tags'
 import { unwrapContent } from '@/lib/utils/content'
 import { getOgImageUrl } from '@/lib/unsplash'
+import SiteHeader from '@/components/SiteHeader'
 
 interface PostPageProps {
   params: Promise<{ slug: string; locale: string }>
@@ -269,35 +270,7 @@ export default async function PostPage({
       />
       
       <div className="min-h-screen bg-white">
-        <header className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" role="banner">
-          <div className="border-b border-gray-100">
-            <div className="flex justify-between items-center py-8">
-              <a href={brandConfig.logo.url || '/'} className="flex items-center">
-                {brandConfig.logo.image ? (
-                  <img src={brandConfig.logo.image} alt={brandConfig.logo.text} className="h-6 w-auto" />
-                ) : (
-                  <span className="text-3xl font-serif italic">{brandConfig.logo.text}</span>
-                )}
-              </a>
-            </div>
-            {/* Navigation */}
-            <nav className="flex justify-center items-center gap-6 pb-4" aria-label="Main navigation">
-              {(navigationConfig[lang as keyof typeof navigationConfig] ?? navigationConfig[siteConfig.defaultLocale]).map((item, index) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`text-sm font-medium pb-2 ${
-                    item.href === '/archive'
-                      ? 'text-gray-900 border-b-2 border-gray-900'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </header>
+        <SiteHeader locale={lang as keyof typeof navigationConfig} />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full overflow-x-hidden">
           <div className="xl:flex xl:gap-8">

@@ -6,6 +6,7 @@ import { Metadata } from 'next'
 import { siteConfig, brandConfig, navigationConfig } from '@/config'
 import { shouldUseNextImage } from '@/lib/image-utils'
 import { tagsToArray } from '@/lib/utils/tags'
+import SiteHeader from '@/components/SiteHeader'
 
 // ISR: revalidate hourly. Restores bfcache while keeping homepage data fresh.
 export const revalidate = 3600
@@ -106,36 +107,7 @@ export default async function HomePage({
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header with Logo */}
-      <header className="border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-8">
-            <a href={brandConfig.logo.url || '/'} className="flex items-center gap-3">
-              {brandConfig.logo.image ? (
-                <img src={brandConfig.logo.image} alt={brandConfig.logo.text} className="h-6 w-auto" />
-              ) : (
-                <h1 className="logo-text">{brandConfig.logo.text}</h1>
-              )}
-            </a>
-          </div>
-          {/* Navigation */}
-          <nav className="flex justify-center items-center gap-6 pb-4" aria-label="Main navigation">
-            {(navigationConfig.ko).map((item, index) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`text-sm font-medium pb-2 ${
-                  index === 0 
-                    ? 'text-gray-900 border-b-2 border-gray-900' 
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </header>
+      <SiteHeader currentPath="/" />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {posts.length > 0 && (

@@ -11,6 +11,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import { calculateReadingTime, formatReadingTime } from '@/lib/reading-time'
 import { tagsToArray } from '@/lib/utils/tags'
 import { siteConfig, brandConfig } from '@/config'
+import SiteHeader from '@/components/SiteHeader'
 
 interface PostPageProps {
   params: Promise<{ slug: string }>
@@ -248,23 +249,7 @@ export default async function PostPage({
       />
       
       <div className="min-h-screen bg-white w-full overflow-x-hidden">
-        <header className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-6">
-              <a href={brandConfig.logo.url || '/'} className="flex items-center">
-                {brandConfig.logo.image ? (
-                  <img src={brandConfig.logo.image} alt={brandConfig.logo.text} className="h-6 w-auto" />
-                ) : (
-                  <span className="text-3xl font-bold text-gray-900">{brandConfig.logo.text}</span>
-                )}
-              </a>
-              <nav className="flex items-center gap-4">
-                <Link href="/about" className="text-gray-600 hover:text-gray-900">About</Link>
-                <Link href="/contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
-              </nav>
-            </div>
-          </div>
-        </header>
+        <SiteHeader />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full overflow-x-hidden">
           <div className="flex gap-8">
