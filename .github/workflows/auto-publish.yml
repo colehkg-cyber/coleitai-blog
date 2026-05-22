@@ -22,6 +22,14 @@ jobs:
     steps:
       - name: Trigger AI generation endpoint
         run: |
+          # 시크릿이 등록되지 않았으면 친절히 안내하고 종료 (curl URL malformed / exit 3 방지)
+          if [ -z "${{ secrets.SITE_URL }}" ] || [ -z "${{ secrets.CRON_SECRET }}" ]; then
+            echo "❌ GitHub Secret이 등록되지 않았습니다."
+            echo "   다음 2개를 등록하세요: Settings → Secrets and variables → Actions"
+            echo "   - SITE_URL    : 배포된 Vercel URL (예: https://coleitai-blog.vercel.app, 끝에 / 없이)"
+            echo "   - CRON_SECRET : 라우트 인증용 Bearer 토큰 (Vercel 환경변수 CRON_SECRET 값과 동일)"
+            exit 1
+          fi
           # -L: SITE_URL이 redirect 도메인이어도 따라가서 호출 (308 무한대기 방지)
           response=$(curl -sL -o /tmp/body.json -w "%{http_code}" -X POST \
             "${{ secrets.SITE_URL }}/api/cron/generate-post" \
