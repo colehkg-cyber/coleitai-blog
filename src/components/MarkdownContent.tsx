@@ -69,6 +69,25 @@ export default function MarkdownContent({ content: rawContent }: MarkdownContent
           ul: ({children}) => <ul style={{listStyleType: 'disc', marginBottom: '1.25rem', paddingLeft: '1.5rem'}}>{children}</ul>,
           ol: ({children}) => <ol style={{listStyleType: 'decimal', marginBottom: '1.25rem', paddingLeft: '1.5rem'}}>{children}</ol>,
           li: ({children}) => <li style={{marginBottom: '0.5rem', lineHeight: 1.75}}>{children}</li>,
+          input: ({type, checked}) => {
+            // GFM 작업 목록(- [ ] / - [x])의 체크박스는 비활성·장식용이다.
+            // 라벨이 없어 Lighthouse 접근성 "form elements do not have associated labels"
+            // 경고가 뜨므로, 접근성 트리에서 숨기고(aria-hidden) 포커스 대상에서 제외한다.
+            if (type === 'checkbox') {
+              return (
+                <input
+                  type="checkbox"
+                  checked={!!checked}
+                  readOnly
+                  disabled
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  style={{marginRight: '0.5rem'}}
+                />
+              )
+            }
+            return <input type={type} />
+          },
           blockquote: ({children}) => <blockquote style={{borderLeft: '4px solid #e5e7eb', paddingLeft: '1rem', margin: '1.5rem 0', fontStyle: 'italic', color: '#6b7280'}}>{children}</blockquote>,
           code: ({children, className, node}) => {
             const isInline = !node?.position?.start?.line || node?.position?.start?.line === node?.position?.end?.line;

@@ -53,6 +53,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   if (!post || !post.publishedAt) {
     return {
       title: 'Post Not Found',
+      description: siteConfig.description[siteConfig.defaultLocale],
     }
   }
 

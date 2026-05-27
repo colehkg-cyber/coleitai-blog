@@ -4,6 +4,13 @@
 
 ---
 
+## 2026-05-27 — SEO/접근성: not-found description + 작업목록 체크박스 라벨 경고 제거
+
+- **변경**:
+  - `src/app/posts/[slug]/page.tsx`: "Post Not Found" 분기에도 `description`(사이트 기본 설명) 추가
+  - `src/components/MarkdownContent.tsx`: `input` 렌더러 추가 — GFM 작업목록 체크박스(비활성·장식용)에 `aria-hidden`+`tabIndex=-1` 부여
+- **이유**: Lighthouse 접근성 "form elements do not have associated labels"가 본문 마크다운 `- [ ]` 체크박스 때문에 발생. 신규 밀키트 사용자에게 동일 문제가 퍼지지 않도록 템플릿에 반영.
+- **검증**: `pnpm type-check` 통과(에러 0).
 ## 2026-05-27 — GitHub Actions 정리: 죽은 워크플로우 삭제 + Hourly 503 재시도
 
 - **변경**:
