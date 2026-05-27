@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-05-27 — 헤더 색 config 단일 제어 + 컨설팅 제거
+
+- **변경**:
+  - `src/components/SiteHeader.tsx`: 하드코딩 색(그라데이션/회색)을 `brandConfig.header`(배경/글자) inline style로 전환. 색 변경이 config 한 곳으로 끝남. (구조·locale prop은 기존 유지)
+  - `src/config/brand.config.ts`: `header.background`/`header.text` 추가. 템플릿 기본은 **흰색 배경(#ffffff) + 파랑 글자(#1d4ed8)** 유지.
+  - 컨설팅 제거: `src/app/[locale]/consulting/` 삭제, `features.config.ts` `consulting` 플래그 삭제, `middleware.ts` 컨설팅 서브도메인 리다이렉트 블록 삭제(기능 OFF라 동작 영향 없음).
+- **이유**: 수강생이 "헤더 색 바꿔줘" 했을 때 `brand.config.ts` 한 곳만 고치면 되도록 구조 정리. 컨설팅은 CMA 전용이라 템플릿에서 제외.
+- **검증**: `pnpm type-check` 통과(에러 0).
 ## 2026-05-27 — SEO/접근성: not-found description + 작업목록 체크박스 라벨 경고 제거
 
 - **변경**:

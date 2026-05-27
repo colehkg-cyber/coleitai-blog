@@ -23,9 +23,6 @@ export const featuresConfig = {
   /** 뉴스레터 구독 */
   newsletter: false,
 
-  /** 컨설팅 서브도메인 리다이렉트 */
-  consulting: false,
-
   /** 광고 차단기 감지 알림 */
   adBlockerNotice: false,
 

@@ -7,8 +7,6 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone()
     let pathname = url.pathname
     const hostname = request.headers.get('host') || ''
-    const isConsultingSubdomain = hostname.startsWith('consulting.')
-
 
     // Handle www redirect + other redirects in a single hop
     const isWww = hostname.startsWith('www.')
@@ -18,20 +16,6 @@ export async function middleware(request: NextRequest) {
     const pathnameHasLocale = locales.some(
       (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     )
-
-    // Subdomain Handling (consulting feature toggle)
-    const consultingEnabled = process.env.NEXT_PUBLIC_FEATURE_CONSULTING === 'true'
-    const consultingDomain = process.env.NEXT_PUBLIC_CONSULTING_DOMAIN || ''
-
-    if (consultingEnabled && isConsultingSubdomain) {
-      if (!pathname.includes('/consulting')) {
-        return NextResponse.redirect(new URL(`/consulting`, request.url))
-      }
-    }
-
-    if (consultingEnabled && !isConsultingSubdomain && pathname.includes('/consulting') && consultingDomain) {
-      return NextResponse.redirect(new URL(`https://${consultingDomain}/consulting`, request.url))
-    }
 
     // Skip locale redirect for special routes
     const skipLocaleRedirect = [
