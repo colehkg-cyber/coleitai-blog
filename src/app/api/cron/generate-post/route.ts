@@ -25,6 +25,36 @@ import { getDefaultPostAuthor } from '@/lib/settings'
 
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || '')
 
+// Gemini가 과부하(503) 또는 rate limit(429)을 뱉으면 일시적인 경우가 많으므로
+// 지수 백오프로 재시도한다. maxDuration(60초) 안에서 끝나도록 짧게 잡는다.
+function isRetryableGeminiError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err)
+  return /\b(503|429)\b|Service Unavailable|overloaded|high demand|rate limit/i.test(msg)
+}
+
+async function generateContentWithRetry<T>(
+  fn: () => Promise<T>,
+  { retries = 3, baseDelayMs = 2000 }: { retries?: number; baseDelayMs?: number } = {}
+): Promise<T> {
+  let lastErr: unknown
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      return await fn()
+    } catch (err) {
+      lastErr = err
+      if (!isRetryableGeminiError(err) || attempt === retries - 1) throw err
+      const delay = baseDelayMs * Math.pow(2, attempt) // 2s, 4s, 8s
+      logger.warn('Cron: Gemini 일시적 오류 — 재시도', {
+        attempt: attempt + 1,
+        delayMs: delay,
+        err: err instanceof Error ? err.message : String(err),
+      })
+      await new Promise((resolve) => setTimeout(resolve, delay))
+    }
+  }
+  throw lastErr
+}
+
 /**
  * Vercel Cron + 수동 호출 모두 허용:
  *  - Vercel cron: `x-vercel-cron` 헤더 자동 부여
@@ -89,10 +119,12 @@ async function generatePost(request: NextRequest) {
   const fullPrompt = `${systemInstruction}\n\n------\n\n${knowledgeContext}**EXECUTE TASK:**\n\n${userPrompt}`
 
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' })
-  const result = await model.generateContent({
-    contents: [{ role: 'user', parts: [{ text: fullPrompt }] }],
-    generationConfig: { temperature: 0.7, maxOutputTokens: 8192 },
-  })
+  const result = await generateContentWithRetry(() =>
+    model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: fullPrompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 8192 },
+    })
+  )
 
   const responseText = result.response.text()
 

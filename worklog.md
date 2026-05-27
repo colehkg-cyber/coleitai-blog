@@ -4,6 +4,13 @@
 
 ---
 
+## 2026-05-27 — GitHub Actions 정리: 죽은 워크플로우 삭제 + Hourly 503 재시도
+
+- **변경**:
+  - `.github/workflows/daily-content.yml`, `.github/workflows/daily-shorts-regeneration.yml` 삭제 (참조 스크립트 부재로 항상 실패하는 죽은 워크플로우)
+  - `src/app/api/cron/generate-post/route.ts`: `generateContentWithRetry` 추가 — Gemini 503/429 시 지수 백오프(2s·4s·8s, 최대 3회) 재시도
+- **이유**: Hourly가 `gemini-2.5-flash-lite` 일시적 503(과부하)에 재시도 없이 실패하던 문제를 템플릿 차원에서 해결. 신규 밀키트 사용자에게 동일 문제가 퍼지지 않도록 원본에 반영.
+- **검증**: `pnpm type-check` 통과(에러 0). 인스턴스(`ahj1402-sys/my-blog`)에서 수동 실행 시 HTTP 200 + 글 발행 확인 완료.
 ## 2026-05-20 — 헤더 통일 (SiteHeader 컴포넌트로 추출)
 
 - **변경**:
