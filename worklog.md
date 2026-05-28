@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-05-28 — 코너스톤 source 글 선택 한도 5 → 20
+
+- **변경**:
+  - `src/app/admin/cornerstone/new/page.tsx`: `MAX_PICK` 5 → 20 (MIN 3 유지)
+  - `src/app/api/admin/cornerstone/generate/route.ts`: 서버 검증 `> 5` → `> 20`, 에러 문구 수정
+  - `src/app/admin/cornerstone/page.tsx`: 안내 문구 "5개/5편" → "3~20개"
+- **이유**: 코너스톤에 더 많은 글(최대 20개)을 묶을 수 있도록.
+- **검증**: `pnpm type-check` 통과(에러 0).
 ## 2026-05-27 — 헤더 색 config 단일 제어 + 컨설팅 제거
 
 - **변경**:

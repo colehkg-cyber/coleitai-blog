@@ -42,7 +42,7 @@ export default function CornerstoneListPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">코너스톤 관리</h1>
           <p className="text-sm text-gray-600 mt-1">
-            기존 글 5개를 묶어 5,000~8,000자 종합 가이드를 자동 생성합니다.
+            기존 글 3~20개를 묶어 5,000~8,000자 종합 가이드를 자동 생성합니다.
             발행 시 source 글들에 자동으로 링크 박스가 삽입됩니다.
           </p>
         </div>
@@ -60,7 +60,7 @@ export default function CornerstoneListPage() {
         <div className="border-2 border-dashed border-gray-200 rounded-lg p-12 text-center">
           <p className="text-gray-500 mb-2">아직 생성된 코너스톤이 없습니다.</p>
           <p className="text-sm text-gray-400">
-            발행된 글이 20편 이상 쌓인 후 같은 주제 5편을 묶어 만드는 것이 효과적입니다.
+            발행된 글이 20편 이상 쌓인 후 같은 주제 여러 편(3~20개)을 묶어 만드는 것이 효과적입니다.
           </p>
         </div>
       ) : (

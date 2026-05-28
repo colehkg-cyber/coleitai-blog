@@ -14,7 +14,7 @@ interface PostListItem {
 }
 
 const MIN_PICK = 3
-const MAX_PICK = 5
+const MAX_PICK = 20
 
 export default function NewCornerstonePage() {
   const router = useRouter()

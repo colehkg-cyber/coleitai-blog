@@ -32,12 +32,12 @@ async function handler(request: NextRequest): Promise<NextResponse> {
 
   if (!Array.isArray(body.sourcePostIds) || body.sourcePostIds.length < 3) {
     return NextResponse.json(
-      { error: '3개 이상 5개 이하의 source 글을 선택해야 합니다.' },
+      { error: '3개 이상 20개 이하의 source 글을 선택해야 합니다.' },
       { status: 400 }
     )
   }
-  if (body.sourcePostIds.length > 5) {
-    return NextResponse.json({ error: '최대 5개의 source 글만 묶을 수 있습니다.' }, { status: 400 })
+  if (body.sourcePostIds.length > 20) {
+    return NextResponse.json({ error: '최대 20개의 source 글만 묶을 수 있습니다.' }, { status: 400 })
   }
   if (!body.mainKeyword || body.mainKeyword.trim().length < 2) {
     return NextResponse.json({ error: '메인 키워드는 필수입니다.' }, { status: 400 })
