@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-03 — WebMCP 통합 (Phase 1 선언형 + Phase 2 명령형)
+
+- **변경**:
+  - Phase 1 (선언형 마크업, commit `c538183`):
+    - `src/app/admin/login/page.tsx` → `toolname="admin_login"` + 비밀번호 input에 `toolparamdescription`
+    - `src/components/PostEditor.tsx` → `isEdit`에 따라 `create_post` / `update_post` toolname, 콘텐츠 편집 섹션 7개 input(title/slug/excerpt/coverImage/tags/seoTitle/seoDescription)에 `name` + `toolparamdescription`, publish checkbox에 `name="publishNow"` 추가
+    - `src/components/comments/CommentForm.tsx` → `toolname="add_comment"`, authorName/content에 `name` 속성 보강 + `toolparamdescription`
+    - `src/components/NewsletterAnalytics.tsx` → `toolname="subscribe_newsletter"`
+  - Phase 2 (명령형 API, commit `def405d`):
+    - `src/components/WebMCPRegistrar.tsx` 신규 — `document.modelContext.registerTool`로 `searchPosts`, `getRecentPosts`, `getCategories`, `subscribeNewsletter` 4개 등록. `AbortController`로 unmount 시 cleanup. WebMCP 미지원 브라우저는 조용히 패스
+    - `src/app/layout.tsx` → root body children 아래에 `<WebMCPRegistrar />` 마운트
+- **이유**: Chrome WebMCP를 통해 AI 에이전트가 본 템플릿에서 만들어진 블로그의 폼(로그인, 글 작성, 댓글, 구독)을 도구로 호출하고, 글 검색·최근 글·카테고리 조회를 명령형 tool로 활용할 수 있게 함. 실습본(`ahj1402-sys/my-blog`)에서 type-check + build 통과 후 동일 패치 적용.
+- **검증**:
+  - `pnpm type-check` 통과(에러 0)
+  - 실습본에서 `pnpm build` 통과(라우트 정상, sitemap 정상 생성)
+  - 선언형 비표준 HTML 속성은 React JSX 타입에 없어 `{...({ toolname: ... } as Record<string, string>)}` 패턴으로 우회 → React 19가 그대로 DOM에 출력
+  - JSON Schema 표준 준수(`type/properties/required/minimum/maximum/default/format`), `readOnlyHint` annotation 부여
+- **메모**:
+  - `subscribeNewsletter`는 백엔드 endpoint 미구현 — analytics 트래킹만 수행하는 mock 동작 (수강생이 자신의 백엔드를 붙일 때 교체)
+  - 본문 에디터(MDEditor)는 일반 `<input>`이 아니라 자동 schema 노출 대상이 아님. 추후 AI가 본문 채우려면 hidden input 동기화 필요
+  - WebMCP는 Chrome 실험적 기능 — 수강생이 자신의 사이트에서 테스트할 땐 `chrome://flags`에서 WebMCP 활성화 필요
+
 ## 2026-05-28 — 코너스톤 source 글 선택 한도 5 → 20
 
 - **변경**:
