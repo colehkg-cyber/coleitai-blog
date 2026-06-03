@@ -6,6 +6,7 @@ import "./globals.css";
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import AdBlockerNotice from '@/components/AdBlockerNotice';
+import WebMCPRegistrar from '@/components/WebMCPRegistrar';
 import { siteConfig, brandConfig, featuresConfig } from '@/config';
 import { getSettingValue } from '@/lib/settings';
 
@@ -152,6 +153,7 @@ export default function RootLayout({
         {featuresConfig.serviceWorker && <ServiceWorkerRegistration />}
         {children}
         {featuresConfig.adBlockerNotice && <AdBlockerNotice />}
+        <WebMCPRegistrar />
       </body>
     </html>
   );
