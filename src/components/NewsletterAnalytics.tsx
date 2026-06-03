@@ -32,7 +32,13 @@ export default function NewsletterAnalytics({ children, onSubmit }: NewsletterAn
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit}
+      {...({
+        toolname: 'subscribe_newsletter',
+        tooldescription: '이메일 주소를 뉴스레터 구독 목록에 추가합니다. children으로 전달되는 input은 name="email"이어야 합니다.',
+      } as Record<string, string>)}
+    >
       {children}
     </form>
   )

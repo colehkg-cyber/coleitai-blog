@@ -45,7 +45,14 @@ export default function AdminLoginPage() {
             관리자 비밀번호를 입력하세요
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form
+          className="mt-8 space-y-6"
+          onSubmit={handleSubmit}
+          {...({
+            toolname: 'admin_login',
+            tooldescription: '관리자 비밀번호로 로그인하여 글 작성·수정 페이지에 접근합니다.',
+          } as Record<string, string>)}
+        >
           <div>
             <label htmlFor="password" className="sr-only">
               비밀번호
@@ -59,6 +66,9 @@ export default function AdminLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               placeholder="비밀번호"
+              {...({
+                toolparamdescription: '관리자 비밀번호. 환경변수 ADMIN_PASSWORD와 일치해야 합니다.',
+              } as Record<string, string>)}
             />
           </div>
 

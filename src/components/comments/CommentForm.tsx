@@ -63,7 +63,14 @@ export default function CommentForm({ postSlug, parentId, onSuccess, onCancel, l
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4"
+      {...({
+        toolname: 'add_comment',
+        tooldescription: '현재 글에 댓글을 작성합니다. 부모 댓글 ID가 있으면 답글로 등록됩니다.',
+      } as Record<string, string>)}
+    >
       <div>
         <label htmlFor="authorName" className="block text-sm font-medium text-gray-700 mb-1">
           {isEnglish ? 'Nickname' : '닉네임'} <span className="text-red-500">*</span>
@@ -71,11 +78,15 @@ export default function CommentForm({ postSlug, parentId, onSuccess, onCancel, l
         <input
           type="text"
           id="authorName"
+          name="authorName"
           required
           value={formData.authorName}
           onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder={isEnglish ? "Your nickname" : "닉네임을 입력하세요"}
+          {...({
+            toolparamdescription: '댓글 작성자 표시 이름(닉네임).',
+          } as Record<string, string>)}
         />
       </div>
 
@@ -85,12 +96,16 @@ export default function CommentForm({ postSlug, parentId, onSuccess, onCancel, l
         </label>
         <textarea
           id="content"
+          name="content"
           required
           rows={4}
           value={formData.content}
           onChange={(e) => setFormData({ ...formData, content: e.target.value })}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder={isEnglish ? "Leave your comment..." : "의견을 남겨주세요..."}
+          {...({
+            toolparamdescription: '댓글 본문 텍스트. 줄바꿈 가능.',
+          } as Record<string, string>)}
         />
       </div>
 

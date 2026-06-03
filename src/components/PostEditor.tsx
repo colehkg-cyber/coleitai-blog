@@ -135,7 +135,16 @@ export default function PostEditor({ initialData, onSubmit, isEdit = false }: Po
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6"
+      {...({
+        toolname: isEdit ? 'update_post' : 'create_post',
+        tooldescription: isEdit
+          ? '기존 글의 제목·본문·태그·SEO 메타 등을 수정합니다. 슬러그는 그대로 두는 것을 권장.'
+          : '새 블로그 글을 작성합니다. 제목·슬러그·본문이 필수이며, 발행 체크박스를 켜면 즉시 공개됩니다.',
+      } as Record<string, string>)}
+    >
       {/* AI 콘텐츠 생성 섹션 */}
       <div className="rounded-xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-6">
         <div className="flex items-center gap-2 mb-4">
@@ -259,10 +268,14 @@ export default function PostEditor({ initialData, onSubmit, isEdit = false }: Po
           <input
             type="text"
             id="title"
+            name="title"
             required
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            {...({
+              toolparamdescription: '글 제목. 60자 이내, 핵심 키워드를 앞쪽에 배치하는 것을 권장.',
+            } as Record<string, string>)}
           />
         </div>
 
@@ -274,10 +287,14 @@ export default function PostEditor({ initialData, onSubmit, isEdit = false }: Po
             <input
               type="text"
               id="slug"
+              name="slug"
               required
               value={formData.slug}
               onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
               className="block w-full rounded-none rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              {...({
+                toolparamdescription: 'URL 슬러그(a-z, 0-9, 하이픈). 영문 소문자 3~6단어, 60자 이내.',
+              } as Record<string, string>)}
             />
             <button
               type="button"
@@ -295,10 +312,14 @@ export default function PostEditor({ initialData, onSubmit, isEdit = false }: Po
           </label>
           <textarea
             id="excerpt"
+            name="excerpt"
             rows={2}
             value={formData.excerpt}
             onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            {...({
+              toolparamdescription: '글 요약(2~3문장, 160자 이내). 메타 description의 fallback으로도 쓰임.',
+            } as Record<string, string>)}
           />
         </div>
 
@@ -310,10 +331,14 @@ export default function PostEditor({ initialData, onSubmit, isEdit = false }: Po
             <input
               type="url"
               id="coverImage"
+              name="coverImage"
               placeholder="이미지 URL을 입력하거나 아래에서 파일을 업로드하세요"
               value={formData.coverImage}
               onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              {...({
+                toolparamdescription: '커버 이미지의 절대 URL(https). 비워두면 OG 기본 이미지 사용.',
+              } as Record<string, string>)}
             />
 
             <div className="flex items-center space-x-4">
@@ -393,9 +418,13 @@ export default function PostEditor({ initialData, onSubmit, isEdit = false }: Po
           <input
             type="text"
             id="tags"
+            name="tags"
             value={formData.tags}
             onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            {...({
+              toolparamdescription: '쉼표로 구분된 태그 목록. 예: "Next.js, React, Vercel".',
+            } as Record<string, string>)}
           />
         </div>
 
@@ -433,10 +462,14 @@ export default function PostEditor({ initialData, onSubmit, isEdit = false }: Po
                 <input
                   type="text"
                   id="seoTitle"
+                  name="seoTitle"
                   value={formData.seoTitle}
                   onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
                   maxLength={70}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  {...({
+                    toolparamdescription: 'meta title용 SEO 제목(50~60자 권장, 70자 한도). 비우면 글 제목 사용.',
+                  } as Record<string, string>)}
                 />
               </div>
             )
@@ -475,10 +508,14 @@ export default function PostEditor({ initialData, onSubmit, isEdit = false }: Po
                 <input
                   type="text"
                   id="seoDescription"
+                  name="seoDescription"
                   value={formData.seoDescription}
                   onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
                   maxLength={200}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  {...({
+                    toolparamdescription: 'meta description용 SEO 설명(150~160자 권장, 200자 한도).',
+                  } as Record<string, string>)}
                 />
               </div>
             )
@@ -490,12 +527,16 @@ export default function PostEditor({ initialData, onSubmit, isEdit = false }: Po
         <label className="flex items-center">
           <input
             type="checkbox"
+            name="publishNow"
             checked={!!formData.publishedAt}
             onChange={(e) => setFormData({
               ...formData,
               publishedAt: e.target.checked ? new Date().toISOString() : null
             })}
             className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            {...({
+              toolparamdescription: '체크하면 저장 즉시 발행. 미체크 시 초안(DRAFT)으로 저장.',
+            } as Record<string, string>)}
           />
           <span className="ml-2 text-sm text-gray-700">바로 발행하기</span>
         </label>
