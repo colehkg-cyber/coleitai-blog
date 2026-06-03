@@ -26,7 +26,8 @@ export async function middleware(request: NextRequest) {
       '/favicon.ico',
       '/robots.txt',
       '/sitemap.xml',
-      '/ads.txt'
+      '/ads.txt',
+      '/llms.txt'
     ].some(path => pathname.startsWith(path))
 
     // If we need multiple redirects, combine them into one
@@ -96,6 +97,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Match all pathnames except static files and api routes
-    '/((?!api|_next/static|_next/image|favicon.ico|favicon.svg|apple-touch-icon.png|robots.txt|sitemap.xml|ads.txt|fonts|images).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|favicon.svg|apple-touch-icon.png|robots.txt|sitemap.xml|ads.txt|llms.txt|fonts|images).*)',
   ]
 }
